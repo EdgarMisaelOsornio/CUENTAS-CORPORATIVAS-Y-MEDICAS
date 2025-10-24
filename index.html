@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Generador de Claves Corporativas y Citas Médicas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --accent:#0b69ff;
+      --accent-hover:#064acb;
+      --muted:#6b7280;
+      --input-bg:rgba(255,255,255,0.9);
+      --border:#d1d5db;
+      --success:#34d399;
+      --shadow:0 12px 28px rgba(0,0,0,0.1);
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      font-family:'Inter',sans-serif;
+      margin:0;
+      padding:32px;
+      color:#0f172a;
+      background: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), url('fondo-default.png') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    /* Imágenes decorativas */
+	.decor {
+	position: fixed;       /* Fijas en la pantalla, no se mueven con scroll */
+	opacity: 0.6;
+	pointer-events: none;  /* No interfieren con los formularios */
+	z-index: 0;
+	border-radius: 50%;    /* Contorno redondo */
+	object-fit: cover;     
+	width: 100px;          /* Ajusta el tamaño */
+	height: 100px;         /* Ajusta el tamaño */
+}
+
+	/* Posiciones de cada esquina */
+	.decor-top-left { top: 20px; left: 20px; }
+	.decor-top-right { top: 20px; right: 20px; }
+	.decor-bottom-left { bottom: 20px; left: 20px; }
+	.decor-bottom-right { bottom: 20px; right: 20px; }
+
+    .container{max-width:1000px;margin:0 auto; position: relative; z-index:1;}
+
+    header{text-align:center;margin-bottom:40px;}
+    h1{font-size:36px;color:var(--accent);margin-bottom:8px;letter-spacing:1px;}
+    p.subtitle{color:var(--muted);font-size:16px;margin:0;}
+
+    .card{
+      background: rgba(255,255,255,0.95);
+      border-radius:24px;
+      padding:40px;
+      box-shadow:0 16px 36px rgba(0,0,0,0.15);
+      margin-bottom:40px;
+      transition:0.3s;
+    }
+    .card:hover{box-shadow:0 20px 48px rgba(0,0,0,0.2);}
+
+    form .row{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+    label{display:block;font-size:14px;color:var(--muted);margin-bottom:8px;font-weight:600;}
+    input[type=text], select{
+      width:100%;
+      padding:16px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: var(--input-bg);
+      font-size:16px;
+      transition:0.3s;
+    }
+    input[type=text]:focus, select:focus{
+      border-color:var(--accent);
+      outline:none;
+      box-shadow:0 0 12px rgba(11,105,255,0.2);
+    }
+
+    .actions{display:flex;gap:16px;align-items:center;margin-top:24px;flex-wrap:wrap;}
+    button{
+      background: linear-gradient(90deg,#0b69ff,#064acb);
+      color:#fff;
+      padding:14px 24px;
+      border-radius:16px;
+      border:0;
+      cursor:pointer;
+      font-size:16px;
+      font-weight:700;
+      transition:0.3s;
+      box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    }
+    button:hover{
+      background: linear-gradient(90deg,#064acb,#0b69ff);
+      box-shadow:0 6px 16px rgba(0,0,0,0.15);
+    }
+    button.ghost{
+      background:transparent;
+      color:var(--accent);
+      border:2px solid rgba(11,105,255,0.3);
+    }
+    button.ghost:hover{
+      background:var(--accent);
+      color:#fff;
+      border-color:var(--accent-hover);
+    }
+
+    .output{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:24px;
+      margin-top:32px;
+      border-top:2px solid #d1d5db;
+      padding-top:24px;
+    }
+    .field{
+      background: rgba(255,255,255,0.95);
+      padding:20px;
+      border-radius:18px;
+      border:1px solid #e5e7eb;
+      word-break:break-word;
+      transition:0.3s;
+      position:relative;
+    }
+    .field .small{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:8px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+    }
+    .field:hover{background:#f4faff;}
+    .field::before{
+      content:'';
+      position:absolute;
+      top:0; left:0;
+      width:6px; height:100%;
+      background:var(--accent);
+      border-radius:18px 0 0 18px;
+    }
+    .citas-field{background:#e6f2ff;border:1px solid #b3d8ff;}
+    .citas-field::before{background:var(--success);}
+
+    @media(max-width:800px){.row{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+  <!-- Imágenes decorativas flotantes -->
+<img src="https://aquimediosdecomunicacion.com/wp-content/uploads/2021/10/significado-de-las-calabazas-en-halloween-portada.jpg" class="decor decor-top-left">
+<img src="https://aquimediosdecomunicacion.com/wp-content/uploads/2021/10/significado-de-las-calabazas-en-halloween-portada.jpg" class="decor decor-top-right">
+<img src="https://aquimediosdecomunicacion.com/wp-content/uploads/2021/10/significado-de-las-calabazas-en-halloween-portada.jpg" class="decor decor-bottom-left">
+<img src="https://aquimediosdecomunicacion.com/wp-content/uploads/2021/10/significado-de-las-calabazas-en-halloween-portada.jpg" class="decor decor-bottom-right">
+
+  <div class="container">
+    <header>
+      <h1>Generador de Claves Corporativas</h1>
+      <p class="subtitle">Crea usuarios y contraseñas automáticamente para cuentas corporativas y citas médicas</p>
+    </header>
+
+    <div class="card">
+      <form id="generator" onsubmit="return false;">
+        <div class="row">
+          <div>
+            <label for="officeSelect">Selecciona Oficina</label>
+            <select id="officeSelect">
+              <option value="">-- selecciona oficina --</option>
+            </select>
+          </div>
+          <div>
+            <label for="curpInput">CURP del usuario</label>
+            <input id="curpInput" type="text" maxlength="18" placeholder="Ej: MAAR251024MMNRRTA3" />
+          </div>
+          <div style="grid-column: span 2;">
+            <label for="nameInput">Nombre completo del usuario</label>
+            <input id="nameInput" type="text" placeholder="Ej: RUTH MARIA ARNAIZ" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="generate">Generar</button>
+          <button id="copyAll" class="ghost" type="button">Copiar todo</button>
+          <button id="downloadCsv" class="ghost" type="button">Descargar CSV</button>
+        </div>
+
+        <div class="output" id="outputArea" style="display:none;">
+          <div class="field">
+            <div class="small">Usuario (Corporativo)</div>
+            <div id="outUser" style="font-weight:700;"></div>
+          </div>
+          <div class="field">
+            <div class="small">Contraseña</div>
+            <div id="outPass" style="font-weight:700;"></div>
+          </div>
+          <div class="field">
+            <div class="small">Confirmación</div>
+            <div id="outConfirm" style="font-weight:700;"></div>
+          </div>
+          <div class="field">
+            <div class="small">Descripción (Nombre Completo)</div>
+            <div id="outDesc" style="font-weight:700;"></div>
+          </div>
+          <div class="field">
+            <div class="small">Oficina (clave)</div>
+            <div id="outOffice" style="font-weight:700;"></div>
+          </div>
+          <div class="field">
+            <div class="small">Nomenclatura (3 letras)</div>
+            <div id="outNomen" style="font-weight:700;"></div>
+          </div>
+          <div class="field citas-field">
+            <div class="small">Usuario (Citas Médicas - ISF)</div>
+            <div id="outCitasUser" style="font-weight:700;"></div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Base de datos de oficinas
+    const officeMap = {
+      "0414":"GCR","0419":"LNX","1158":"VEM","1339":"XPO","1519":"XCN","1522":"XIZ","1545":"XAR","1550":"YDC","1616":"XTE","1677":"XWT",
+      "2262":"SGK","2269":"BGK","3025":"TBK","3069":"WGC","3398":"WSH","3441":"IOS","3469":"LRB","3477":"YMX","3480":"TVX","3481":"NXT",
+      "3483":"VTW","3485":"OWN","3488":"SYT","3489":"WNS","3504":"ABU","3505":"GEL","3509":"HMU","3510":"JCJ","3518":"JOE","3519":"CSE",
+      "3520":"EXW","3578":"VBS","3584":"SIP","3591":"HYL","3593":"MSJ","3597":"ZSN","3604":"IVT","3605":"IBC","3606":"MRU","3608":"EDL",
+      "3609":"TOB","3611":"BPP","3612":"OAD","3615":"HRM","3617":"YDO","3618":"ZLI","3622":"OPO","3623":"KJN","3624":"BCG","3627":"EFZ",
+      "3628":"OIF","3630":"WAR","3635":"TVS","3749":"IOP","3751":"JNG","3755":"KGB","3759":"JDO","3761":"NFW","3762":"GEA","3764":"NHN",
+      "3767":"BOD","3783":"GDW","3789":"NSH","3791":"PFE","3792":"TZK","3799":"MCK","3800":"LMF","3801":"LMH","3802":"LMJ","3803":"LMK",
+      "3804":"LQM","3805":"LQW","3806":"LQE","3807":"LQY","3809":"LQU","3810":"LQI","3811":"LQO","3812":"LQP","3813":"LQA","3814":"SXS",
+      "3815":"AYS","3816":"CBM","3817":"LSF","3818":"LDW","3819":"LQH","3820":"LQJ","3821":"LQK","3822":"LQL","3823":"LQX","3824":"LQC",
+      "3825":"LQB","3826":"LQN","3827":"LWW","3828":"LWR","3829":"LWY","3830":"LWU","3831":"LWI","3832":"LWO","3833":"LWA","3834":"LWD",
+      "3835":"LWF","3836":"LWH","3837":"LWJ","3838":"LWL","3839":"LWZ","3840":"LWV","3841":"LWM","3842":"LEQ","3843":"LEW","3844":"LEU",
+      "3845":"LEI","3846":"LEP","3847":"LEK","3848":"LEZ","3849":"LEX","3850":"LEV","3851":"LEN","3852":"LEM","3853":"LRO","3854":"LRP",
+      "3855":"LRH","3856":"LRJ","3857":"LRM","3861":"AQW","3867":"LHD","3868":"SHB","3869":"DFV","3870":"BKA","3871":"JWS","3873":"LZE","3874":"LZU",
+      "3875":"LZD","3876":"LDU","3877":"LSY","3878":"LXF","3879":"SZG","3880":"GJD","3883":"KSU","3884":"LDI","3885":"TDT","3886":"TSU"
+    };
+
+    const officeSelect = document.getElementById('officeSelect');
+    Object.keys(officeMap).sort().forEach(key => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = `${key} — ${officeMap[key]}`;
+      officeSelect.appendChild(opt);
+    });
+
+    const nameInput = document.getElementById('nameInput');
+    nameInput.addEventListener('input', ()=>{ nameInput.value = nameInput.value.toUpperCase(); });
+
+    function sanitizeCurp(s){ return (s||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
+
+    document.getElementById('generate').addEventListener('click', ()=>{
+      const office = officeSelect.value;
+      const curpRaw = document.getElementById('curpInput').value;
+      const fullname = nameInput.value.trim();
+      if(!office || !curpRaw || !fullname){ alert('Todos los campos son requeridos.'); return; }
+      const curp = sanitizeCurp(curpRaw);
+      const nomen = officeMap[office] || '---';
+      const curpFirst3 = curp.substring(0,3).padEnd(3,'X');
+      const username = `${nomen}${office}${curpFirst3}`;
+      const password = curp.substring(0,10).padEnd(10,'X');
+
+      document.getElementById('outUser').textContent = username;
+      document.getElementById('outPass').textContent = password;
+      document.getElementById('outConfirm').textContent = password;
+      document.getElementById('outDesc').textContent = fullname;
+      document.getElementById('outOffice').textContent = office;
+      document.getElementById('outNomen').textContent = nomen;
+
+      const citasUser = `${nomen}${curp.substring(0,4)}ISF`;
+      document.getElementById('outCitasUser').textContent = citasUser;
+
+      document.getElementById('outputArea').style.display = '';
+    });
+
+    // Copiar y descargar CSV
+    document.getElementById('copyAll').addEventListener('click', async ()=>{
+      const out = document.getElementById('outputArea');
+      if(out.style.display==='none'){ alert('Genera primero los datos.'); return; }
+      const text = `Usuario Corporativo: ${document.getElementById('outUser').textContent}\nContraseña: ${document.getElementById('outPass').textContent}\nConfirmación: ${document.getElementById('outConfirm').textContent}\nDescripción: ${document.getElementById('outDesc').textContent}\nOficina: ${document.getElementById('outOffice').textContent}\nNomenclatura: ${document.getElementById('outNomen').textContent}\nUsuario Citas Médicas: ${document.getElementById('outCitasUser').textContent}`;
+      try{ await navigator.clipboard.writeText(text); alert('Copiado al portapapeles.'); }catch(e){ prompt('Copia manualmente:', text); }
+    });
+
+    document.getElementById('downloadCsv').addEventListener('click', ()=>{
+      const out = document.getElementById('outputArea');
+      if(out.style.display==='none'){ alert('Genera primero los datos.'); return; }
+      const row = [
+        document.getElementById('outUser').textContent,
+        document.getElementById('outPass').textContent,
+        document.getElementById('outConfirm').textContent,
+        document.getElementById('outDesc').textContent,
+        document.getElementById('outOffice').textContent,
+        document.getElementById('outNomen').textContent,
+        document.getElementById('outCitasUser').textContent
+      ];
+      const csv = `usuario,contrasena,confirmacion,descripcion,oficina,nomenclatura,usuario_citas_medicas\n"${row.map(r=>r.replace(/"/g,'""')).join('","')}"`;
+      const blob = new Blob([csv],{type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `usuario_${row[0] || 'nuevo'}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // Cambiar fondo automáticamente según fecha
+    const month = new Date().getMonth(); // 0=Enero
+    let bg = 'https://as2.ftcdn.net/v2/jpg/03/80/34/41/1000_F_380344118_9GdQjP68EjeUq56SbmErjyzchO02j2xj.jpg';
+    if(month === 11){ bg = 'https://png.pngtree.com/thumb_back/fh260/background/20241112/pngtree-christmas-greetings-background-with-blank-room-image_16562583.jpg'; } // diciembre
+    else if(month === 9){ bg = 'https://as2.ftcdn.net/v2/jpg/03/80/34/41/1000_F_380344118_9GdQjP68EjeUq56SbmErjyzchO02j2xj.jpg'; } // octubre
+    document.body.style.backgroundImage = `linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.1)), url(${bg})`;
+  </script>
+
+</body>
+</html>
